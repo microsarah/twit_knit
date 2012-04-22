@@ -23,6 +23,9 @@ String.prototype.linktag=function(){
 	});
 };
 
+var tweetsArray = new Array;
+//New array in which tweets will be stored
+
 //give option to show links or not (choose in HTML)
 var showTweetLinks='none';
 
@@ -95,8 +98,11 @@ function fetch_tweets(elem){
 				var since=sinceDay+' days ago';
 			}
 			
-			//user's twitter ID & timestamp (written below the tweet)
-			var tweetBy='<a class="tweet-user" target="_blank" href="http://twitter.com/'+this.from_user+'">@'+this.from_user+'</a> <span class="tweet-time">'+since+'</span>';
+			//user's twitter ID (written below the tweet)
+			var tweetBy='<a class="tweet-user" target="_blank" href="http://twitter.com/'+this.from_user+'">@'+this.from_user+'</a>'; 
+			
+			//display timestamp (written below the tweet)
+			//<span class="tweet-time">'+since+'</span>';
 			
 			//reply option (written below the tweet)
 			if(showTweetLinks.indexOf('reply')!=-1)
@@ -111,15 +117,25 @@ function fetch_tweets(elem){
 				tweetBy=tweetBy+' &middot; <a class="tweet-rt" target="_blank" href="http://twitter.com/?status=RT @'+this.from_user+' '+escape(this.text.replace(/&quot;/g,'"'))+'&in_reply_to_status_id='+this.id+'&in_reply_to='+this.from_user+'">RT</a>';
 			
 			//image display
-			var tweet='<div class="tweet"><div class="tweet-left"><a target="_blank" href="http://twitter.com/'+this.from_user+'"><img width="48" height="48" alt="'+this.from_user+' on Twitter" src="'+this.profile_image_url+'" /></a></div><div class="tweet-right"><p class="text">'+this.text.linkify().linkuser().linktag().replace(/<a/g,'<a target="_blank"')+'<br />'+tweetBy+'</p></div><br style="clear: both;" /></div>';
-			elem.append(tweet);
+			var tweet='<div class="tweet"><div class="tweet-right"><p class="text">'+this.text.linkify().linkuser().linktag().replace(/<a/g,'<a target="_blank"')+'<br />'+tweetBy+'</p></div><br style="clear: both;" /></div>';
+			tweetsArray.push(tweet);
+			console.log(tweet);
+			//Pushing the new tweet into the array
+			//elem.append(tweet);
+			
+			
 		});
 	});
+	
+	var latestTweet = tweetsArray.length -1;
+	var newTweet = tweetsArray[latestTweet];
+	document.getElementById('tweetRain').innerHTML=newTweet;
+	//Looks through the HTML for a div with the ID 'tweetRain' and then between the div tags, removed existing content between the div tags and adds the content of the latest tweet.
 	return(false);
 }
 
-//if "show tweet links" on HTML doc is set to 'all'
-//then show the tweet links as defined above
+//if showTweetLinks is marked 'all' on HTML doc
+//then display the reply, view & RT functions as above
 $(function(){
 	showTweetLinks=showTweetLinks.toLowerCase();
 	if(showTweetLinks.indexOf('all')!=-1)
